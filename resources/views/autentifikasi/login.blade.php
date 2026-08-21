@@ -20,11 +20,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #0f172a;
+            background-color: #f8fafc;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
-            color: #f8fafc;
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.07) 0px, transparent 50%);
+            color: #0f172a;
             padding: 1.5rem;
             position: relative;
             overflow-x: hidden;
@@ -32,13 +32,13 @@
 
         .bg-glow {
             position: absolute;
-            width: 350px;
-            height: 350px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            filter: blur(140px);
+            width: 450px;
+            height: 450px;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(59, 130, 246, 0.12));
+            filter: blur(120px);
             border-radius: 50%;
-            opacity: 0.35;
             z-index: 0;
+            pointer-events: none;
         }
 
         .login-card {
@@ -46,18 +46,16 @@
             z-index: 10;
             width: 100%;
             max-width: 440px;
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 24px;
             padding: 2.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07), 0 0 1px 1px rgba(15, 23, 42, 0.03);
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -69,13 +67,13 @@
         .brand-icon {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            background: linear-gradient(135deg, #4f46e5, #2563eb);
             border-radius: 16px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.35);
         }
 
         .brand-icon svg {
@@ -88,13 +86,13 @@
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.025em;
-            color: #ffffff;
-            margin-bottom: 0.25rem;
+            color: #0f172a;
+            margin-bottom: 0.35rem;
         }
 
         .brand-subtitle {
             font-size: 0.875rem;
-            color: #94a3b8;
+            color: #64748b;
         }
 
         .alert {
@@ -105,18 +103,19 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-weight: 500;
         }
 
         .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
         }
 
         .alert-success {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            color: #86efac;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
         }
 
         .form-group {
@@ -126,8 +125,8 @@
         .form-label {
             display: block;
             font-size: 0.875rem;
-            font-weight: 500;
-            color: #cbd5e1;
+            font-weight: 600;
+            color: #334155;
             margin-bottom: 0.5rem;
         }
 
@@ -142,30 +141,34 @@
             transform: translateY(-50%);
             width: 20px;
             height: 20px;
-            color: #64748b;
+            color: #94a3b8;
             transition: color 0.2s;
         }
 
         .form-input {
             width: 100%;
             padding: 0.875rem 1rem 0.875rem 2.875rem;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
             border-radius: 12px;
-            color: #ffffff;
+            color: #0f172a;
             font-size: 0.95rem;
             outline: none;
             transition: all 0.2s ease;
         }
 
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
         .form-input:focus {
-            border-color: #818cf8;
-            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25);
-            background: rgba(15, 23, 42, 0.8);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            background: #ffffff;
         }
 
         .form-input:focus + svg {
-            color: #818cf8;
+            color: #4f46e5;
         }
 
         .remember-row {
@@ -180,34 +183,36 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #94a3b8;
+            color: #475569;
             cursor: pointer;
+            font-weight: 500;
         }
 
         .checkbox-label input {
-            accent-color: #6366f1;
+            accent-color: #4f46e5;
             width: 16px;
             height: 16px;
+            cursor: pointer;
         }
 
         .btn-submit {
             width: 100%;
             padding: 0.875rem;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
+            background: linear-gradient(135deg, #4f46e5, #2563eb);
             border: none;
             border-radius: 12px;
             color: #ffffff;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.35);
             transition: all 0.2s ease;
         }
 
         .btn-submit:hover {
-            opacity: 0.95;
+            background: linear-gradient(135deg, #4338ca, #1d4ed8);
             transform: translateY(-1px);
-            box-shadow: 0 14px 24px -5px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 12px 24px -4px rgba(79, 70, 229, 0.4);
         }
 
         .btn-submit:active {
@@ -218,18 +223,18 @@
             text-align: center;
             margin-top: 1.75rem;
             font-size: 0.875rem;
-            color: #94a3b8;
+            color: #64748b;
         }
 
         .footer-text a {
-            color: #a78bfa;
+            color: #4f46e5;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
 
         .footer-text a:hover {
-            color: #c4b5fd;
+            color: #3730a3;
             text-decoration: underline;
         }
 
@@ -237,30 +242,36 @@
         .demo-box {
             margin-top: 1.5rem;
             padding: 1rem;
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px dashed rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #94a3b8;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            font-size: 0.825rem;
+            color: #64748b;
         }
 
         .demo-box p {
             font-weight: 600;
-            color: #cbd5e1;
+            color: #334155;
             margin-bottom: 0.5rem;
         }
 
         .demo-pill {
             display: flex;
             justify-content: space-between;
-            padding: 0.35rem 0.6rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
+            padding: 0.4rem 0.75rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
             margin-bottom: 0.35rem;
+            color: #334155;
         }
 
         .demo-pill:last-child {
             margin-bottom: 0;
+        }
+
+        .demo-pill strong {
+            color: #0f172a;
         }
     </style>
 </head>

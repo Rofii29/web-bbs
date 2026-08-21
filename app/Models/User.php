@@ -23,6 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'no_hp',
+        'jabatan',
+        'unit_departemen',
+        'status',
     ];
 
     /**
@@ -39,6 +43,14 @@ class User extends Authenticatable
     public function isKaryawan(): bool
     {
         return $this->role === 'karyawan';
+    }
+
+    /**
+     * Cek apakah akun user berstatus aktif.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
     }
 
     /**
@@ -60,7 +72,6 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
     }
 }

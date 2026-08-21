@@ -18,6 +18,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default('karyawan');
+            $table->string('no_hp')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->string('unit_departemen')->nullable();
+            $table->string('status')->default('pending');
             $table->rememberToken();
             $table->timestamps();
         });
