@@ -13,6 +13,17 @@
         margin: 0 auto;
     }
 
+    /* === RESPONSIVE WRAPPER === */
+    .bbs-paper-scroll-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .bbs-paper-scroll-wrapper .bbs-paper {
+        min-width: 820px; /* Pastikan form tidak rusak di HP */
+    }
+
     .bbs-header-table {
         width: 100%;
         border-collapse: collapse;
@@ -97,7 +108,7 @@
         font-size: 9.5px;
     }
 
-    .bbs-checklist-table th, 
+    .bbs-checklist-table th,
     .bbs-checklist-table td {
         border: 1px solid #000;
         padding: 2px 4px;
@@ -117,8 +128,28 @@
         font-size: 10px;
     }
 
-    .bbs-row-selected {
-        background: #fef08a !important;
+    /* Status cell per-item: safe=hijau, at_risk=merah, kosong=putih */
+    .bbs-status-safe {
+        background: #dcfce7 !important;
+        text-align: center;
+        color: #15803d;
+        font-weight: bold;
+    }
+
+    .bbs-status-risk {
+        background: #fee2e2 !important;
+        text-align: center;
+        color: #b91c1c;
+        font-weight: bold;
+    }
+
+    /* Row highlight jika item dipilih */
+    .bbs-row-safe-item {
+        background: #f0fdf4;
+    }
+
+    .bbs-row-risk-item {
+        background: #fef2f2;
         font-weight: bold;
     }
 
@@ -183,6 +214,10 @@
             border: none;
             box-shadow: none;
             padding: 0;
+            min-width: unset !important;
+        }
+        .bbs-paper-scroll-wrapper {
+            overflow: visible;
         }
         .no-print {
             display: none !important;
@@ -190,6 +225,37 @@
     }
 </style>
 
+@php
+    /* ============================================================
+     * Decode item_states JSON dari database.
+     * item_states adalah array asosiatif: ['1.1' => 'safe', '1.2' => 'at_risk', ...]
+     * Fallback ke empty array jika null (data lama sebelum fitur ini)
+     * ============================================================ */
+    $states = is_array($observasi->item_states) ? $observasi->item_states : [];
+
+    /**
+     * Helper: return CSS class untuk row berdasarkan state item.
+     */
+    $rowClass = function(string $code) use ($states): string {
+        $state = $states[$code] ?? '';
+        if ($state === 'safe') return 'bbs-row-safe-item';
+        if ($state === 'at_risk') return 'bbs-row-risk-item';
+        return '';
+    };
+
+    /**
+     * Helper: return simbol + CSS class untuk cell STATUS.
+     * Return: ['symbol' => '✓'|'✗'|'', 'class' => 'bbs-status-safe'|'bbs-status-risk'|'']
+     */
+    $statusCell = function(string $code) use ($states): array {
+        $state = $states[$code] ?? '';
+        if ($state === 'safe')    return ['symbol' => '✓', 'class' => 'bbs-status-safe'];
+        if ($state === 'at_risk') return ['symbol' => '✗', 'class' => 'bbs-status-risk'];
+        return ['symbol' => '', 'class' => ''];
+    };
+@endphp
+
+<div class="bbs-paper-scroll-wrapper">
 <div class="bbs-paper">
     <!-- Header Dokumen Resmi -->
     <table class="bbs-header-table">
@@ -230,7 +296,7 @@
         <div><strong>Tanggal:</strong> <span>{{ date('d F Y', strtotime($observasi->tanggal)) }}</span></div>
         <div><strong>Lokasi:</strong> <span>{{ $observasi->lokasi->nama_lokasi ?? '-' }}</span></div>
         <div>
-            <strong>Safe:</strong> 
+            <strong>Safe:</strong>
             <span style="font-size: 13px; font-weight: bold; color: {{ $observasi->jenis_perilaku === 'safe' ? '#16a34a' : '#aaa' }};">
                 {{ $observasi->jenis_perilaku === 'safe' ? '✓' : '—' }}
             </span>
@@ -239,7 +305,7 @@
         <div><strong>Nama:</strong> <span>{{ $observasi->user->name ?? '-' }}</span></div>
         <div><strong>Unit:</strong> <span>{{ $observasi->unit_departemen ?? 'Operasional' }}</span></div>
         <div>
-            <strong>At Risk:</strong> 
+            <strong>At Risk:</strong>
             <span style="font-size: 13px; font-weight: bold; color: {{ $observasi->jenis_perilaku === 'at_risk' ? '#dc2626' : '#aaa' }};">
                 {{ $observasi->jenis_perilaku === 'at_risk' ? '✗' : '—' }}
             </span>
@@ -259,147 +325,157 @@
                     <tr>
                         <th style="width: 25px;">No.</th>
                         <th>Deskripsi Perilaku</th>
-                        <th style="width: 45px;">Status</th>
+                        <th style="width: 40px;">Status</th>
                         <th style="width: 25px;">No.</th>
                         <th>Deskripsi Perilaku</th>
-                        <th style="width: 45px;">Status</th>
+                        <th style="width: 40px;">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1: Posisi Badan | Ergonomi Kantor (Lanjutan) -->
+                    <!-- === 1. Posisi Badan | 6. Ergonomi Kantor (Lanjutan) === -->
                     <tr>
                         <td colspan="3" class="bbs-cat-header">1. Posisi Badan</td>
                         <td colspan="3" class="bbs-cat-header">6. Ergonomi Kantor (Lanjutan)</td>
                     </tr>
-                    @php
-                        $katNama = strtolower($observasi->kategori->nama_kategori ?? '');
-                        $isPosisi = str_contains($katNama, 'posisi') || str_contains($katNama, 'badan');
-                        $isErgo = str_contains($katNama, 'ergonomi') || str_contains($katNama, 'kantor');
-                        $isApd = str_contains($katNama, 'apd') || str_contains($katNama, 'pelindung');
-                        $isProsedur = str_contains($katNama, 'prosedur') || str_contains($katNama, 'jsa') || str_contains($katNama, 'loto');
-                        $isPerkakas = str_contains($katNama, 'perkakas') || str_contains($katNama, 'peralatan');
-                        $isArea = str_contains($katNama, 'area') || str_contains($katNama, 'housekeeping');
-                        $isLingkungan = str_contains($katNama, 'lingkungan') || str_contains($katNama, 'tumpahan');
-                        $isMengemudi = str_contains($katNama, 'mengemudi') || str_contains($katNama, 'kemudi');
-                    @endphp
+                    @foreach([
+                        ['1.1','Menghindari Lintasan Bahaya (line of Fire)', '6.4','Penyangga Punggung'],
+                        ['1.2','Berjalan / Bergerak dg Pandangan ke Arah Gerakan', '6.5','Posisi Pundak'],
+                        ['1.3','Menjaga Pandangan Mata pada Pekerjaan', '6.6','Posisi Pergelangan Tangan dan Tangan'],
+                        ['1.4','Menjaga Badan di Luar Posisi Terjepit', '6.7','Memegang / Menggerakkan Mouse'],
+                        ['1.5','Menaiki / Menuruni Tangga/Fasilitas', '6.8','Mengenali dan Melaporkan Ketidaknyamanan'],
+                    ] as [$cL, $dL, $cR, $dR])
+                    @php $sL = $statusCell($cL); $sR = $statusCell($cR); @endphp
+                    <tr class="{{ $rowClass($cL) ?: $rowClass($cR) }}">
+                        <td>{{ $cL }}</td><td>{{ $dL }}</td>
+                        <td class="{{ $sL['class'] }}" style="text-align:center;">{{ $sL['symbol'] }}</td>
+                        <td>{{ $cR }}</td><td>{{ $dR }}</td>
+                        <td class="{{ $sR['class'] }}" style="text-align:center;">{{ $sR['symbol'] }}</td>
+                    </tr>
+                    @endforeach
 
-                    <tr class="{{ $isPosisi ? 'bbs-row-selected' : '' }}">
-                        <td>1.1</td><td>Menghindari Lintasan Bahaya (line of Fire)</td><td style="text-align:center;">{{ $isPosisi ? '✓' : '' }}</td>
-                        <td>6.4</td><td>Penyangga Punggung</td><td style="text-align:center;"></td>
-                    </tr>
-                    <tr class="{{ $isPosisi ? 'bbs-row-selected' : '' }}">
-                        <td>1.2</td><td>Berjalan / Bergerak dg Pandangan ke Arah Gerakan</td><td style="text-align:center;"></td>
-                        <td>6.5</td><td>Posisi Pundak</td><td style="text-align:center;"></td>
-                    </tr>
-                    <tr class="{{ $isPosisi ? 'bbs-row-selected' : '' }}">
-                        <td>1.3</td><td>Menjaga Pandangan Mata pada Pekerjaan</td><td style="text-align:center;"></td>
-                        <td>6.6</td><td>Posisi Pergelangan Tangan dan Tangan</td><td style="text-align:center;"></td>
-                    </tr>
-                    <tr class="{{ $isPosisi ? 'bbs-row-selected' : '' }}">
-                        <td>1.4</td><td>Menjaga Badan di Luar Posisi Terjepit</td><td style="text-align:center;"></td>
-                        <td>6.7</td><td>Memegang / Menggerakkan Mouse</td><td style="text-align:center;"></td>
-                    </tr>
-                    <tr class="{{ $isPosisi ? 'bbs-row-selected' : '' }}">
-                        <td>1.5</td><td>Menaiki / Menuruni Tangga/Fasilitas</td><td style="text-align:center;"></td>
-                        <td>6.8</td><td>Mengenali dan Melaporkan Ketidaknyamanan</td><td style="text-align:center;"></td>
-                    </tr>
-
-                    <!-- Row 2: Menggunakan Badan | Pemeliharaan Lingkungan -->
+                    <!-- === 2. Menggunakan Badan | 7. Pemeliharaan Lingkungan === -->
                     <tr>
                         <td colspan="3" class="bbs-cat-header">2. Menggunakan Badan</td>
                         <td colspan="3" class="bbs-cat-header">7. Pemeliharaan Lingkungan</td>
                     </tr>
-                    <tr>
-                        <td>2.1</td><td>Mengangkat / Menurunkan / Menekan / Menarik</td><td></td>
-                        <td class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">7.1</td><td class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">Mencegah Tumpahan</td><td style="text-align:center;" class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">{{ $isLingkungan ? '✓' : '' }}</td>
+                    @foreach([
+                        ['2.1','Mengangkat / Menurunkan / Menekan / Menarik', '7.1','Mencegah Tumpahan'],
+                        ['2.2','Menghindar dari Gerakan Memuntir', '7.2','Persiapan Membersihkan Tumpahan'],
+                        ['2.3','Menggapai / Meraih dalam Jangkauan Aman', '7.3','Menangani Limbah B3 / Non-B3'],
+                    ] as [$cL, $dL, $cR, $dR])
+                    @php $sL = $statusCell($cL); $sR = $statusCell($cR); @endphp
+                    <tr class="{{ $rowClass($cL) ?: $rowClass($cR) }}">
+                        <td>{{ $cL }}</td><td>{{ $dL }}</td>
+                        <td class="{{ $sL['class'] }}" style="text-align:center;">{{ $sL['symbol'] }}</td>
+                        <td>{{ $cR }}</td><td>{{ $dR }}</td>
+                        <td class="{{ $sR['class'] }}" style="text-align:center;">{{ $sR['symbol'] }}</td>
                     </tr>
-                    <tr>
-                        <td>2.2</td><td>Menghindar dari Gerakan Memuntir</td><td></td>
-                        <td class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">7.2</td><td class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">Persiapan Membersihkan Tumpahan</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>2.3</td><td>Menggapai / Meraih dalam Jangkauan Aman</td><td></td>
-                        <td class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">7.3</td><td class="{{ $isLingkungan ? 'bbs-row-selected' : '' }}">Menangani Limbah B3 / Non-B3</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>2.4</td><td>Menanggapi Risiko Ergonomi Industri</td><td></td>
+                    @endforeach
+                    @php $s24 = $statusCell('2.4'); @endphp
+                    <tr class="{{ $rowClass('2.4') }}">
+                        <td>2.4</td><td>Menanggapi Risiko Ergonomi Industri</td>
+                        <td class="{{ $s24['class'] }}" style="text-align:center;">{{ $s24['symbol'] }}</td>
                         <td colspan="3" class="bbs-cat-header">8. Alat Pelindung Diri (APD)</td>
                     </tr>
 
-                    <!-- Row 3: Perkakas & Peralatan | APD -->
+                    <!-- === 3. Perkakas & Peralatan | 8. APD === -->
+                    @php $s81 = $statusCell('8.1'); @endphp
                     <tr>
                         <td colspan="3" class="bbs-cat-header">3. Perkakas dan Peralatan</td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.1</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Kepala (Safety Helmet)</td><td style="text-align:center;" class="{{ $isApd ? 'bbs-row-selected' : '' }}">{{ $isApd ? '✓' : '' }}</td>
+                        <td>8.1</td><td>Pelindung Kepala (Safety Helmet)</td>
+                        <td class="{{ $s81['class'] }}" style="text-align:center;">{{ $s81['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isPerkakas ? 'bbs-row-selected' : '' }}">
-                        <td>3.1</td><td>Memilih dan Menggunakan Perkakas / Peralatan</td><td style="text-align:center;">{{ $isPerkakas ? '✓' : '' }}</td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.2</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Mata dan Wajah (Glasses/Shield)</td><td></td>
+                    @foreach([
+                        ['3.1','Memilih dan Menggunakan Perkakas / Peralatan', '8.2','Pelindung Mata dan Wajah (Glasses/Shield)'],
+                        ['3.2','Menggunakan Pelindung / Barikade / Alat Peringatan', '8.3','Pelindung Pendengaran (Earplug/Muff)'],
+                    ] as [$cL, $dL, $cR, $dR])
+                    @php $sL = $statusCell($cL); $sR = $statusCell($cR); @endphp
+                    <tr class="{{ $rowClass($cL) ?: $rowClass($cR) }}">
+                        <td>{{ $cL }}</td><td>{{ $dL }}</td>
+                        <td class="{{ $sL['class'] }}" style="text-align:center;">{{ $sL['symbol'] }}</td>
+                        <td>{{ $cR }}</td><td>{{ $dR }}</td>
+                        <td class="{{ $sR['class'] }}" style="text-align:center;">{{ $sR['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isPerkakas ? 'bbs-row-selected' : '' }}">
-                        <td>3.2</td><td>Menggunakan Pelindung / Barikade / Alat Peringatan</td><td></td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.3</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Pendengaran (Earplug/Muff)</td><td></td>
-                    </tr>
+                    @endforeach
 
-                    <!-- Row 4: Prosedur | APD Lanjutan & Mengemudi -->
+                    <!-- === 4. Prosedur | 8. APD Lanjutan === -->
+                    @php $s84 = $statusCell('8.4'); @endphp
                     <tr>
                         <td colspan="3" class="bbs-cat-header">4. Prosedur</td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.4</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Pernafasan (Masker/Respirator)</td><td></td>
+                        <td>8.4</td><td>Pelindung Pernafasan (Masker/Respirator)</td>
+                        <td class="{{ $s84['class'] }}" style="text-align:center;">{{ $s84['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isProsedur ? 'bbs-row-selected' : '' }}">
-                        <td>4.1</td><td>Persiapan Kerja dan JSA (Job Safety Analysis)</td><td style="text-align:center;">{{ $isProsedur ? '✓' : '' }}</td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.5</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Tangan dan Lengan (Gloves)</td><td></td>
+                    @foreach([
+                        ['4.1','Persiapan Kerja dan JSA (Job Safety Analysis)', '8.5','Pelindung Tangan dan Lengan (Gloves)'],
+                        ['4.2','Mengikuti Prosedur Kerja / SOP', '8.6','Pelindung Jatuh (Full Body Harness)'],
+                        ['4.3','Mengisolasi Energi (Lock-Out / Tag-Out)', '8.7','Pakaian Pelindung yang Sesuai (Wearpack)'],
+                        ['4.4','Mengerjakan Hot-Work sesuai izin kerja', '8.8','Pelindung Kaki (Safety Shoes)'],
+                    ] as [$cL, $dL, $cR, $dR])
+                    @php $sL = $statusCell($cL); $sR = $statusCell($cR); @endphp
+                    <tr class="{{ $rowClass($cL) ?: $rowClass($cR) }}">
+                        <td>{{ $cL }}</td><td>{{ $dL }}</td>
+                        <td class="{{ $sL['class'] }}" style="text-align:center;">{{ $sL['symbol'] }}</td>
+                        <td>{{ $cR }}</td><td>{{ $dR }}</td>
+                        <td class="{{ $sR['class'] }}" style="text-align:center;">{{ $sR['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isProsedur ? 'bbs-row-selected' : '' }}">
-                        <td>4.2</td><td>Mengikuti Prosedur Kerja / SOP</td><td></td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.6</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Jatuh (Full Body Harness)</td><td></td>
-                    </tr>
-                    <tr class="{{ $isProsedur ? 'bbs-row-selected' : '' }}">
-                        <td>4.3</td><td>Mengisolasi Energi (Lock-Out / Tag-Out)</td><td></td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.7</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pakaian Pelindung yang Sesuai (Wearpack)</td><td></td>
-                    </tr>
-                    <tr class="{{ $isProsedur ? 'bbs-row-selected' : '' }}">
-                        <td>4.4</td><td>Mengerjakan Hot-Work sesuai izin kerja</td><td></td>
-                        <td class="{{ $isApd ? 'bbs-row-selected' : '' }}">8.8</td><td class="{{ $isApd ? 'bbs-row-selected' : '' }}">Pelindung Kaki (Safety Shoes)</td><td></td>
-                    </tr>
-                    <tr class="{{ $isProsedur ? 'bbs-row-selected' : '' }}">
-                        <td>4.5</td><td>Memasuki Ruang Terbatas (Confined Space)</td><td></td>
+                    @endforeach
+                    @php $s45 = $statusCell('4.5'); @endphp
+                    <tr class="{{ $rowClass('4.5') }}">
+                        <td>4.5</td><td>Memasuki Ruang Terbatas (Confined Space)</td>
+                        <td class="{{ $s45['class'] }}" style="text-align:center;">{{ $s45['symbol'] }}</td>
                         <td colspan="3" class="bbs-cat-header">9. Mengemudi</td>
                     </tr>
-                    <tr class="{{ $isProsedur ? 'bbs-row-selected' : '' }}">
-                        <td>4.7</td><td>Komunikasi antar Rekan Kerja</td><td></td>
-                        <td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">9.1</td><td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">Perencanaan Perjalanan & Inspection</td><td style="text-align:center;" class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">{{ $isMengemudi ? '✓' : '' }}</td>
+                    @php $s47 = $statusCell('4.7'); $s91 = $statusCell('9.1'); @endphp
+                    <tr class="{{ $rowClass('4.7') ?: $rowClass('9.1') }}">
+                        <td>4.7</td><td>Komunikasi antar Rekan Kerja</td>
+                        <td class="{{ $s47['class'] }}" style="text-align:center;">{{ $s47['symbol'] }}</td>
+                        <td>9.1</td><td>Perencanaan Perjalanan & Inspection</td>
+                        <td class="{{ $s91['class'] }}" style="text-align:center;">{{ $s91['symbol'] }}</td>
                     </tr>
 
-                    <!-- Row 5: Area Kerja | Mengemudi Lanjutan -->
+                    <!-- === 5. Area Kerja | 9. Mengemudi Lanjutan === -->
+                    @php $s92 = $statusCell('9.2'); @endphp
                     <tr>
                         <td colspan="3" class="bbs-cat-header">5. Area Kerja</td>
-                        <td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">9.2</td><td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">Pre-Trip Inspection & Sabuk Keselamatan</td><td></td>
+                        <td>9.2</td><td>Pre-Trip Inspection & Sabuk Keselamatan</td>
+                        <td class="{{ $s92['class'] }}" style="text-align:center;">{{ $s92['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isArea ? 'bbs-row-selected' : '' }}">
-                        <td>5.1</td><td>Bekerja pada Posisi Stabil</td><td style="text-align:center;">{{ $isArea ? '✓' : '' }}</td>
-                        <td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">9.3</td><td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">Menyesuaikan Kecepatan Kendaraan</td><td></td>
+                    @foreach([
+                        ['5.1','Bekerja pada Posisi Stabil', '9.3','Menyesuaikan Kecepatan Kendaraan'],
+                        ['5.2','Pengaturan Area Kerja / Housekeeping', '9.4','Menjaga Jarak Iring Amannya'],
+                        ['5.3','Bekerja di Lingkungan dg Cahaya Cukup', '9.8','Memundurkan Kendaraan dg Panduan'],
+                    ] as [$cL, $dL, $cR, $dR])
+                    @php $sL = $statusCell($cL); $sR = $statusCell($cR); @endphp
+                    <tr class="{{ $rowClass($cL) ?: $rowClass($cR) }}">
+                        <td>{{ $cL }}</td><td>{{ $dL }}</td>
+                        <td class="{{ $sL['class'] }}" style="text-align:center;">{{ $sL['symbol'] }}</td>
+                        <td>{{ $cR }}</td><td>{{ $dR }}</td>
+                        <td class="{{ $sR['class'] }}" style="text-align:center;">{{ $sR['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isArea ? 'bbs-row-selected' : '' }}">
-                        <td>5.2</td><td>Pengaturan Area Kerja / Housekeeping</td><td></td>
-                        <td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">9.4</td><td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">Menjaga Jarak Iring Amannya</td><td></td>
-                    </tr>
-                    <tr class="{{ $isArea ? 'bbs-row-selected' : '' }}">
-                        <td>5.3</td><td>Bekerja di Lingkungan dg Cahaya Cukup</td><td></td>
-                        <td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">9.8</td><td class="{{ $isMengemudi ? 'bbs-row-selected' : '' }}">Memundurkan Kendaraan dg Panduan</td><td></td>
-                    </tr>
+                    @endforeach
 
-                    <!-- Row 6: Ergonomi Kantor | Observasi Lainnya -->
+                    <!-- === 6. Ergonomi Kantor | 10. Observasi Perilaku Lainnya === -->
                     <tr>
                         <td colspan="3" class="bbs-cat-header">6. Ergonomi Kantor</td>
                         <td colspan="3" class="bbs-cat-header">10. Observasi Perilaku Lainnya</td>
                     </tr>
-                    <tr class="{{ $isErgo ? 'bbs-row-selected' : '' }}">
-                        <td>6.1</td><td>Melakukan Istirahat Berkala</td><td style="text-align:center;">{{ $isErgo ? '✓' : '' }}</td>
-                        <td>10.1</td><td>Lain-lain</td><td style="text-align:center;"></td>
+                    @php $s61 = $statusCell('6.1'); $s101 = $statusCell('10.1'); @endphp
+                    <tr class="{{ $rowClass('6.1') ?: $rowClass('10.1') }}">
+                        <td>6.1</td><td>Melakukan Istirahat Berkala</td>
+                        <td class="{{ $s61['class'] }}" style="text-align:center;">{{ $s61['symbol'] }}</td>
+                        <td>10.1</td><td>Lain-lain</td>
+                        <td class="{{ $s101['class'] }}" style="text-align:center;">{{ $s101['symbol'] }}</td>
                     </tr>
-                    <tr class="{{ $isErgo ? 'bbs-row-selected' : '' }}">
-                        <td>6.2</td><td>Posisi Leher dan Punggung Tegak</td><td></td>
-                        <td colspan="3" style="background:#f1f5f9; text-align:center; font-size:9px; font-weight:bold;">Klasifikasi Risiko C4.5: <span style="color: {{ $observasi->tingkat_risiko === 'tinggi' ? '#dc2626' : ($observasi->tingkat_risiko === 'sedang' ? '#d97706' : '#16a34a') }};">{{ strtoupper($observasi->tingkat_risiko) }}</span></td>
+                    @php $s62 = $statusCell('6.2'); @endphp
+                    <tr class="{{ $rowClass('6.2') }}">
+                        <td>6.2</td><td>Posisi Leher dan Punggung Tegak</td>
+                        <td class="{{ $s62['class'] }}" style="text-align:center;">{{ $s62['symbol'] }}</td>
+                        <td colspan="3" style="background:#f1f5f9; text-align:center; font-size:9px; font-weight:bold;">
+                            Klasifikasi Risiko C4.5:
+                            <span style="color: {{ $observasi->tingkat_risiko === 'tinggi' ? '#dc2626' : ($observasi->tingkat_risiko === 'sedang' ? '#d97706' : '#16a34a') }};">
+                                {{ strtoupper($observasi->tingkat_risiko) }}
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -422,7 +498,23 @@
 
             <div class="bbs-field-box">
                 <div class="bbs-field-label">Nomor Perilaku (lihat tabel disamping) :</div>
-                <div class="bbs-field-value">{{ $observasi->kategori->id ?? '1.1' }} — {{ $observasi->kategori->nama_kategori ?? 'Umum' }}</div>
+                <div class="bbs-field-value">
+                    @php
+                        $checkedItems = array_keys(array_filter($states, fn($v) => in_array($v, ['safe','at_risk'])));
+                        $safeItems = array_keys(array_filter($states, fn($v) => $v === 'safe'));
+                        $riskItems = array_keys(array_filter($states, fn($v) => $v === 'at_risk'));
+                    @endphp
+                    @if(count($riskItems) > 0)
+                        <span style="color:#b91c1c; font-weight:bold;">At-Risk: {{ implode(', ', $riskItems) }}</span>
+                        @if(count($safeItems) > 0)
+                            <br><span style="color:#15803d;">Safe: {{ implode(', ', $safeItems) }}</span>
+                        @endif
+                    @elseif(count($safeItems) > 0)
+                        Safe: {{ implode(', ', $safeItems) }}
+                    @else
+                        {{ $observasi->kategori->id ?? '—' }} — {{ $observasi->kategori->nama_kategori ?? 'Umum' }}
+                    @endif
+                </div>
             </div>
 
             <div class="bbs-field-box">
@@ -470,4 +562,5 @@
     <div class="bbs-watermark">
         Document Uncontrolled When Printed. Dokumen Tidak Terkendali Apabila dicetak.
     </div>
+</div>
 </div>

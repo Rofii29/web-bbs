@@ -231,6 +231,11 @@
                 </div>
 
                 <div class="form-group full-width">
+                    <label for="no_batch" class="form-label">No. Batch <span style="font-weight:400; color:#94a3b8;">(Opsional)</span></label>
+                    <input type="text" id="no_batch" name="no_batch" class="form-input" placeholder="Contoh: BATCH-2026-01 atau Angkatan 3" value="{{ old('no_batch') }}">
+                </div>
+
+                <div class="form-group full-width">
                     <label class="form-label">Role Pengguna</label>
                     <div class="role-selector">
                         <label class="role-option">

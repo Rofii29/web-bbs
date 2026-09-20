@@ -34,7 +34,7 @@
             </div>
             <div style="display: flex; gap: 0.5rem;">
                 <button type="submit" class="btn btn-primary">🔍 Filter</button>
-                <a href="{{ route('admin.observasi.index') }}" class="btn btn-secondary">Reset</a>
+                <a href="{{ route('admin.observasi.index') }}" onclick="window.location.href='{{ route('admin.observasi.index') }}'; return false;" class="btn btn-secondary">Reset</a>
             </div>
         </form>
     </div>

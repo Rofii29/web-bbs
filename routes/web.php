@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/verifikasi-user/{id}/approve', [AdminBbsController::class, 'approveUser'])->name('verifikasi.approve');
         Route::post('/verifikasi-user/{id}/reject', [AdminBbsController::class, 'rejectUser'])->name('verifikasi.reject');
 
+        // Data Karyawan PT
+        Route::get('/karyawan', [AdminBbsController::class, 'daftarKaryawan'])->name('karyawan.index');
+
         // Kelola Observasi BBS
         Route::get('/observasi', [AdminBbsController::class, 'kelolaObservasi'])->name('observasi.index');
         Route::get('/observasi/{id}', [AdminBbsController::class, 'detailObservasi'])->name('observasi.detail');

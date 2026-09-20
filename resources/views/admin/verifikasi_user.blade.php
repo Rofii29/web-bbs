@@ -19,6 +19,7 @@
                         <th>No. HP</th>
                         <th>Jabatan</th>
                         <th>Unit / Dept</th>
+                        <th>No. Batch</th>
                         <th>Terdaftar</th>
                         <th>Aksi</th>
                     </tr>
@@ -31,6 +32,13 @@
                             <td>{{ $user->no_hp }}</td>
                             <td>{{ $user->jabatan }}</td>
                             <td>{{ $user->unit_departemen }}</td>
+                            <td>
+                                @if($user->no_batch)
+                                    <span style="background:#eff6ff; color:#3b82f6; padding:0.2rem 0.6rem; border-radius:6px; font-size:0.8rem; font-weight:600;">{{ $user->no_batch }}</span>
+                                @else
+                                    <span style="color:#94a3b8; font-size:0.8rem;">—</span>
+                                @endif
+                            </td>
                             <td style="font-size: 0.8rem; color: #64748b;">{{ $user->created_at->format('d M Y') }}</td>
                             <td>
                                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -47,7 +55,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">
+                            <td colspan="8" style="text-align: center; color: #94a3b8; padding: 2rem;">
                                 🎉 Tidak ada pendaftaran yang menunggu verifikasi.
                             </td>
                         </tr>

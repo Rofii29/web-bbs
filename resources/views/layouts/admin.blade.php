@@ -134,7 +134,7 @@
             flex: 1;
             min-height: 100vh;
         }
-        .content-body { padding: 1.75rem 2rem; }
+        .content-body { padding: 1.75rem 2rem; overflow-x: hidden; }
 
         /* ── CARDS ── */
         .card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
@@ -203,6 +203,7 @@
             .topbar { left: 0; }
             .sidebar-toggle { display: flex; }
             .overlay.show { display: block; }
+            .content-body { padding: 1rem; }
         }
         @media print {
             .sidebar, .topbar { display: none; }
@@ -234,6 +235,10 @@
             </a>
 
             <div class="sidebar-section">Manajemen</div>
+            <a href="{{ route('admin.karyawan.index') }}" class="sidebar-item {{ request()->routeIs('admin.karyawan.*') ? 'active' : '' }}">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Data Karyawan PT
+            </a>
             <a href="{{ route('admin.verifikasi') }}" class="sidebar-item {{ request()->routeIs('admin.verifikasi') ? 'active' : '' }}">
                 <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m22 11-4 4-2-2"/></svg>
                 Verifikasi Karyawan

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'no_hp',
         'jabatan',
         'unit_departemen',
+        'no_batch',
         'status',
     ];
 

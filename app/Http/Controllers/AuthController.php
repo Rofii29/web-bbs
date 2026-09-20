@@ -86,6 +86,7 @@ class AuthController extends Controller
             'no_hp' => ['required', 'string', 'max:20'],
             'jabatan' => ['required', 'string', 'max:255'],
             'unit_departemen' => ['required', 'string', 'max:255'],
+            'no_batch' => ['nullable', 'string', 'max:50'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'in:admin,karyawan'],
         ], [
@@ -96,6 +97,7 @@ class AuthController extends Controller
             'no_hp.required' => 'Nomor HP wajib diisi.',
             'jabatan.required' => 'Jabatan wajib diisi.',
             'unit_departemen.required' => 'Unit / Departemen wajib diisi.',
+            'no_batch.max' => 'Nomor batch maksimal 50 karakter.',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
@@ -110,6 +112,7 @@ class AuthController extends Controller
             'no_hp' => $request->no_hp,
             'jabatan' => $request->jabatan,
             'unit_departemen' => $request->unit_departemen,
+            'no_batch' => $request->no_batch,
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'status' => $status,

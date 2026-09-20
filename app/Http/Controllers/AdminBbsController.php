@@ -65,6 +65,44 @@ class AdminBbsController extends Controller
     }
 
     /**
+     * Data Seluruh Karyawan PT & Status Keaktifannya
+     */
+    public function daftarKaryawan(Request $request)
+    {
+        $query = User::where('role', 'karyawan');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%")
+                  ->orWhere('unit_departemen', 'like', "%{$search}%")
+                  ->orWhere('no_batch', 'like', "%{$search}%");
+            });
+        }
+
+        $karyawanList = $query->latest()->paginate(15)->withQueryString();
+
+        $totalKaryawan = User::where('role', 'karyawan')->count();
+        $totalAktif = User::where('role', 'karyawan')->where('status', 'active')->count();
+        $totalPending = User::where('role', 'karyawan')->where('status', 'pending')->count();
+        $totalRejected = User::where('role', 'karyawan')->where('status', 'rejected')->count();
+
+        return view('admin.karyawan', compact(
+            'karyawanList',
+            'totalKaryawan',
+            'totalAktif',
+            'totalPending',
+            'totalRejected'
+        ));
+    }
+
+    /**
      * Verifikasi Pendaftaran Akun Karyawan
      */
     public function verifikasiUser()
@@ -107,8 +145,14 @@ class AdminBbsController extends Controller
         if ($request->filled('tingkat_risiko')) {
             $query->where('tingkat_risiko', $request->tingkat_risiko);
         }
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        }
 
-        $observasiList = $query->latest()->paginate(15);
+        $observasiList = $query->latest()->paginate(15)->withQueryString();
         $lokasiList = Lokasi::all();
         $kategoriList = KategoriPerilaku::all();
 
@@ -206,8 +250,11 @@ class AdminBbsController extends Controller
     {
         $query = ObservasiBbs::with(['user', 'lokasi', 'kategori']);
 
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('tanggal', [$request->start_date, $request->end_date]);
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
         }
 
         $observasiList = $query->latest()->get();

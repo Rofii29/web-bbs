@@ -18,6 +18,7 @@ class ObservasiBbs extends Model
         'unit_departemen',
         'jenis_perilaku',
         'kategori_id',
+        'item_states',
         'ketika',
         'ditemukan',
         'sebab',
@@ -25,6 +26,10 @@ class ObservasiBbs extends Model
         'tingkat_risiko',
         'status_tindak_lanjut',
         'catatan_tindak_lanjut',
+    ];
+
+    protected $casts = [
+        'item_states' => 'array',
     ];
 
     public function user()

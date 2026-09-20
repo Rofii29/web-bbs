@@ -102,6 +102,7 @@ class KaryawanBbsController extends Controller
             'unit_departemen' => $user->unit_departemen ?? 'Operasional Lapangan',
             'jenis_perilaku' => $request->jenis_perilaku,
             'kategori_id' => $kategoriId,
+            'item_states' => $request->input('item_states', []),
             'ketika' => $request->ketika,
             'ditemukan' => $request->ditemukan,
             'sebab' => $request->sebab,
@@ -167,6 +168,7 @@ class KaryawanBbsController extends Controller
             'no_hp' => ['required', 'string', 'max:20'],
             'jabatan' => ['required', 'string', 'max:255'],
             'unit_departemen' => ['required', 'string', 'max:255'],
+            'no_batch' => ['nullable', 'string', 'max:50'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
@@ -175,6 +177,7 @@ class KaryawanBbsController extends Controller
             'no_hp' => $request->no_hp,
             'jabatan' => $request->jabatan,
             'unit_departemen' => $request->unit_departemen,
+            'no_batch' => $request->no_batch,
         ];
 
         if ($request->filled('password')) {

@@ -30,7 +30,7 @@
                 <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
             </div>
             <button type="submit" class="btn btn-primary">Tampilkan Rekap</button>
-            <a href="{{ route('admin.laporan.index') }}" class="btn btn-secondary">Reset</a>
+            <a href="{{ route('admin.laporan.index') }}" onclick="window.location.href='{{ route('admin.laporan.index') }}'; return false;" class="btn btn-secondary">Reset</a>
         </form>
     </div>
 

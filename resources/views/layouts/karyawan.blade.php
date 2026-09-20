@@ -132,7 +132,7 @@
             flex: 1;
             min-height: 100vh;
         }
-        .content-body { padding: 1.75rem 2rem; }
+        .content-body { padding: 1.75rem 2rem; overflow-x: hidden; }
 
         /* ── CARDS ── */
         .card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
@@ -193,6 +193,7 @@
             .topbar { left: 0; }
             .sidebar-toggle { display: flex; }
             .overlay.show { display: block; }
+            .content-body { padding: 1rem; }
         }
     </style>
     @yield('styles')
