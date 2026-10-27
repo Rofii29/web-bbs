@@ -273,6 +273,81 @@
         .demo-pill strong {
             color: #0f172a;
         }
+
+        /* Refined sign-in visual theme */
+        body {
+            background:
+                radial-gradient(ellipse at 12% 12%, rgba(45,212,191,.22), transparent 28rem),
+                radial-gradient(ellipse at 92% 88%, rgba(59,130,246,.3), transparent 32rem),
+                linear-gradient(135deg, #081323 0%, #10253c 52%, #102c3b 100%);
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .15;
+            background-image: linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(to bottom, black, transparent 82%);
+        }
+        .bg-glow { width: 520px; height: 520px; filter: blur(135px); opacity: .8; }
+        .login-card {
+            max-width: 460px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.72);
+            border-radius: 28px;
+            padding: 2.6rem;
+            box-shadow: 0 32px 90px rgba(0,0,0,.3), 0 4px 18px rgba(15,23,42,.12);
+            backdrop-filter: blur(18px);
+        }
+        .login-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto;
+            height: 5px;
+            background: linear-gradient(90deg, #2dd4bf, #38bdf8, #6366f1);
+        }
+        .brand-header { margin-bottom: 2.15rem; }
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #14b8a6, #0284c7 62%, #4f46e5);
+            box-shadow: 0 12px 28px rgba(2,132,199,.3);
+        }
+        .brand-title { font-size: 1.65rem; letter-spacing: -.045em; }
+        .brand-subtitle { line-height: 1.6; }
+        .form-group { margin-bottom: 1.35rem; }
+        .form-label { color: #25364b; font-size: .82rem; }
+        .form-input {
+            min-height: 52px;
+            background: #f8fafc;
+            border-color: #dce5ee;
+            border-radius: 14px;
+            padding-top: .9rem;
+            padding-bottom: .9rem;
+        }
+        .form-input:focus { border-color: #38bdf8; box-shadow: 0 0 0 4px rgba(14,165,233,.12); }
+        .form-input:focus + svg { color: #0284c7; }
+        .btn-submit {
+            min-height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(105deg, #0f766e, #0284c7 58%, #2563eb);
+            box-shadow: 0 10px 24px rgba(2,132,199,.25);
+        }
+        .btn-submit:hover { background: linear-gradient(105deg, #0d6b64, #0369a1 58%, #1d4ed8); box-shadow: 0 14px 28px rgba(2,132,199,.3); }
+        .demo-box { background: #f5f9fc; border: 1px solid #e4edf4; border-radius: 16px; }
+        .demo-pill { border-radius: 10px; }
+        .footer-text { line-height: 1.6; }
+        .footer-text a { color: #087e8b; }
+        .footer-text a:hover { color: #075985; }
+        @media (max-width: 520px) {
+            body { padding: 1rem; }
+            .login-card { padding: 2rem 1.35rem; border-radius: 23px; }
+            .demo-pill { gap: .5rem; font-size: .75rem; }
+            .brand-title { font-size: 1.45rem; }
+        }
     </style>
 </head>
 <body>
