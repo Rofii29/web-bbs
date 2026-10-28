@@ -426,18 +426,6 @@
             <button type="submit" class="btn-submit">Masuk ke Akun</button>
         </form>
 
-        <div class="demo-box">
-            <p>💡 Akun Demo bawaan:</p>
-            <div class="demo-pill">
-                <span><strong>Admin:</strong> admin@example.com</span>
-                <span>password</span>
-            </div>
-            <div class="demo-pill">
-                <span><strong>Karyawan:</strong> karyawan@example.com</span>
-                <span>password</span>
-            </div>
-        </div>
-
         <p class="footer-text">
             Belum memiliki akun? <a href="{{ route('register') }}">Daftar di sini</a>
         </p>
