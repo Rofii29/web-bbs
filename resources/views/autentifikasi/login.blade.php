@@ -247,41 +247,6 @@
             text-decoration: underline;
         }
 
-        /* Demo accounts box */
-        .demo-box {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 14px;
-            font-size: 0.825rem;
-            color: #64748b;
-        }
-
-        .demo-box p {
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 0.5rem;
-        }
-
-        .demo-pill {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem 0.75rem;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 0.35rem;
-            color: #334155;
-        }
-
-        .demo-pill:last-child {
-            margin-bottom: 0;
-        }
-
-        .demo-pill strong {
-            color: #0f172a;
-        }
 
         /* Refined sign-in visual theme */
         body {
@@ -387,15 +352,6 @@
             box-shadow: 0 14px 28px rgba(2, 132, 199, .3);
         }
 
-        .demo-box {
-            background: #f5f9fc;
-            border: 1px solid #e4edf4;
-            border-radius: 16px;
-        }
-
-        .demo-pill {
-            border-radius: 10px;
-        }
 
         .footer-text {
             line-height: 1.6;
@@ -419,10 +375,6 @@
                 border-radius: 23px;
             }
 
-            .demo-pill {
-                gap: .5rem;
-                font-size: .75rem;
-            }
 
             .brand-title {
                 font-size: 1.45rem;
